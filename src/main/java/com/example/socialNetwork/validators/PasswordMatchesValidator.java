@@ -1,7 +1,7 @@
 package com.example.socialNetwork.validators;
 
 import com.example.socialNetwork.annotations.PasswordMatches;
-import com.example.socialNetwork.payload.SignupRequest;
+import com.example.socialNetwork.payload.request.SignupRequest;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

@@ -1,4 +1,4 @@
-package com.example.socialNetwork.payload;
+package com.example.socialNetwork.payload.request;
 
 import lombok.Data;
 
