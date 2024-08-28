@@ -72,7 +72,7 @@ public class ImageService {
         deflater.finish();
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(data.length);
-        byte[] segment = new byte [1024];
+        byte[] segment = new byte[1024];
         while (!deflater.finished()) {
             int count = deflater.deflate(segment); //фактическое количество байтов сжатых данных, записанных в выходной буфер
             byteArrayOutputStream.write(segment, 0, count);
@@ -95,7 +95,7 @@ public class ImageService {
        inflater.setInput(data);
 
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(data.length);
-    byte[] segment = new byte [1024];
+    byte[] segment = new byte[1024];
     try {
         while (!inflater.finished()) {
             int count = inflater.inflate(segment);
