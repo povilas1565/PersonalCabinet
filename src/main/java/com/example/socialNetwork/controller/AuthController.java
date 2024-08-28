@@ -33,8 +33,8 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
-    // api/auth/signuo
-    // метод, который будет принимать данные пользователей, чтобы они могли зарегистирироваться
+    // api/auth/signup
+    // метод, который будет принимать данные пользователей, чтобы они могли зарегистрироваться
 
     @PostMapping("/api/auth/signup")
     public ResponseEntity<Object> registerUser(@Valid @RequestBody SignupRequest signupRequest, BindingResult bindingResult) {
