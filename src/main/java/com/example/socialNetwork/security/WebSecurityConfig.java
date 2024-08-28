@@ -65,6 +65,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(configUserDetailsService).passwordEncoder(bCryptPasswordEncoder());
     }
 
+    @Override
+    public void configure(WebSecurity web) {
+        web.ignoring().antMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**", "/actuator");
+
+    }
+
 
     @Override
     @Bean(BeanIds.AUTHENTICATION_MANAGER)
