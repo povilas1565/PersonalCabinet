@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/post")
@@ -47,7 +49,32 @@ public class PostController {
         return new ResponseEntity<>(new MessageResponse("The post " + postId + " were deleted"), HttpStatus.OK);
     }
 
-    // ("/all) - getAllPosts (GET-запрос)
-    // ("/user/posts) - getAllPostsForUser (GET-запрос)
-    // ("{postId}/{username}/{like}") - likePost (POST-запрос)
+    @GetMapping("/all")
+    public ResponseEntity<List<PostDTO>> getAllPosts() {
+        List<PostDTO> postDTOList = postService.getAllPosts()
+                .stream()
+                .map(postFacade::postToPostDTO)
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(postDTOList, HttpStatus.OK);
+    }
+
+    @GetMapping("/user/posts")
+    public ResponseEntity<List<PostDTO>> getAllPostsForUser(Principal principal) {
+        List<PostDTO> postDTOList = postService.getAllPostsForUser(principal)
+                .stream()
+                .map(postFacade::postToPostDTO)
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(postDTOList, HttpStatus.OK);
+    }
+
+    @PostMapping("/{postId}/{username}/like")
+    public ResponseEntity<PostDTO> likePost(@PathVariable("postId") String postId,
+                                            @PathVariable("username") String username) {
+        Post post = postService.setLikeToPost(Long.parseLong(postId), username);
+        PostDTO postDTO = postFacade.postToPostDTO(post);
+
+        return new ResponseEntity<>(postDTO, HttpStatus.OK);
+    }
 }
