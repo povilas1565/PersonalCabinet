@@ -1,8 +1,10 @@
 package com.example.socialNetwork.controller;
 
+import com.example.socialNetwork.entity.Image;
 import com.example.socialNetwork.payload.response.MessageResponse;
 import com.example.socialNetwork.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,5 +28,19 @@ public class ImageController {
         return ResponseEntity.ok(new MessageResponse("Image uploaded successfully"));
     }
 
-    // метод получения фотографии профиля пользователя (getUserProfileImage) ("/profileImage")
+    @PostMapping("{postid}/upload")
+    public ResponseEntity<MessageResponse> uploadImageToPost(@PathVariable("postId") String postId,
+                                                             @RequestParam("file") MultipartFile file,
+                                                             Principal principal) throws IOException {
+        imageService.uploadImageToPost(file, principal, Long.parseLong(postId));
+        return ResponseEntity.ok(new MessageResponse("Image uploaded successfully to post " + postId));
+
+    }
+
+    @GetMapping("/{postId}/image")
+    public ResponseEntity<Image> getPostImage(@PathVariable String postId) {
+        Image postImage = imageService.getPostImage(Long.parseLong(postId));
+        return new ResponseEntity<>(postImage, HttpStatus.OK);
+    }
+
 }
