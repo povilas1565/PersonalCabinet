@@ -2,13 +2,14 @@ package com.example.socialNetwork.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import org.springframework.context.annotation.Configuration;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-import java.util.logging.Handler;
+
 
 @Data
 @Entity
@@ -40,4 +41,11 @@ public class Post {
     @Column(updatable = false)
     @JsonFormat(pattern = "yyyy-mm-dd HH:mm:ss")
     private LocalDateTime createDate;
+
+    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "post", orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+
+    public Post() {
+
+    }
 }
