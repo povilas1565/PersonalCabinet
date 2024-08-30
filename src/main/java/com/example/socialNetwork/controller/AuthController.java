@@ -9,6 +9,8 @@ import com.example.socialNetwork.security.jwt.JWTProvider;
 import com.example.socialNetwork.service.UserService;
 import com.example.socialNetwork.validators.ResponseErrorValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -38,9 +40,10 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
+  
+    @Autowired
+    private UserFacade userFacade;
 
-    //api/auth/signup
-    //метод который будет принимать данные пользователя чтобы он мог зарегистрироваться
 
     @PostMapping("/signup")
     public ResponseEntity<Object> registerUser(@Valid @RequestBody SignupRequest signupRequest, BindingResult bindingResult) {
@@ -57,10 +60,6 @@ public class AuthController {
         }
 
     }
-
-
-    //api/auth/signin
-    //метод который будет принимать данные пользователя чтобы он мог авторизоваться
 
     @PostMapping("/signin")
     public ResponseEntity<Object> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, BindingResult bindingResult) {
