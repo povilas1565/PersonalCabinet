@@ -3,14 +3,13 @@ package com.example.socialNetwork.entity;
 import com.example.socialNetwork.entity.enums.ERole;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @Entity
@@ -46,6 +45,10 @@ public class User implements UserDetails {
     @CollectionTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"))
     private Set<ERole> roles = new HashSet<>();
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
+    private List<Post> posts = new ArrayList<>();
 
     @Transient
     private Collection<? extends GrantedAuthority> authorities;
