@@ -1,11 +1,10 @@
 package com.example.socialNetwork.controller;
 
-import com.example.socialNetwork.dto.UserDTO;
-import com.example.socialNetwork.entity.User;
-import com.example.socialNetwork.facade.UserFacade;
 import com.example.socialNetwork.payload.request.LoginRequest;
 import com.example.socialNetwork.payload.request.SignupRequest;
+import com.example.socialNetwork.payload.response.JWTSuccessResponse;
 import com.example.socialNetwork.payload.response.MessageResponse;
+import com.example.socialNetwork.security.SecurityConstants;
 import com.example.socialNetwork.security.jwt.JWTProvider;
 import com.example.socialNetwork.service.UserService;
 import com.example.socialNetwork.validators.ResponseErrorValidator;
@@ -15,6 +14,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -38,38 +40,39 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
-
+  
     @Autowired
     private UserFacade userFacade;
 
-    // api/auth/signup
-    // метод, который будет принимать данные пользователей, чтобы они могли зарегистрироваться
 
-    @PostMapping("/api/auth/signup")
+    @PostMapping("/signup")
     public ResponseEntity<Object> registerUser(@Valid @RequestBody SignupRequest signupRequest, BindingResult bindingResult) {
-
+        //Для начала проверим наличие ошибок:
         ResponseEntity<Object> listErrors = responseErrorValidator.mappedValidatorService(bindingResult);
         if (!ObjectUtils.isEmpty(listErrors)) return listErrors;
 
-        // пробуем создать пользователя
-
+        //пробуем создать юзера
         try {
             userService.createUser(signupRequest);
             return ResponseEntity.ok(new MessageResponse("Registration successfully completed"));
         } catch (Exception e) {
             return ResponseEntity.ok(e.getMessage());
         }
+
     }
 
-    @PostMapping(value = "/signin")
-    public ResponseEntity<UserDTO> loginUser(@Valid @RequestBody LoginRequest loginRequest) {
+    @PostMapping("/signin")
+    public ResponseEntity<Object> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, BindingResult bindingResult) {
+        //Для начала проверим наличие ошибок:
+        ResponseEntity<Object> listErrors = responseErrorValidator.mappedValidatorService(bindingResult);
+        if (!ObjectUtils.isEmpty(listErrors)) return listErrors;
 
-        User currentUser = userService.getCurrentUser(loginRequest::getUserName);
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getUserName(), loginRequest.getPassword()));
 
-        return new ResponseEntity<>(userFacade.userToUserDTO(currentUser), HttpStatus.OK);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = SecurityConstants.TOKEN_PREFIX + jwtProvider.generateToken(authentication);
+
+        return ResponseEntity.ok(new JWTSuccessResponse(true, jwt));
     }
-
-
-    // api/auth/signin
-    // метод, который будет данные пользователей, чтобы они могли авторизоваться
 }
