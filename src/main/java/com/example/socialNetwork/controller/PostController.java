@@ -25,10 +25,8 @@ public class PostController {
 
     @Autowired
     private PostFacade postFacade;
-
     @Autowired
     private PostService postService;
-
     @Autowired
     private ResponseErrorValidator responseErrorValidator;
 
@@ -41,12 +39,6 @@ public class PostController {
         PostDTO postCreated = postFacade.postToPostDTO(post);
 
         return new ResponseEntity<>(postCreated, HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{postId}")
-    public ResponseEntity<MessageResponse> deletePost(@PathVariable("postId") String postId, Principal principal) {
-        postService.deletePost(Long.parseLong(postId), principal);
-        return new ResponseEntity<>(new MessageResponse("The post " + postId + " were deleted"), HttpStatus.OK);
     }
 
     @GetMapping("/all")
@@ -76,5 +68,11 @@ public class PostController {
         PostDTO postDTO = postFacade.postToPostDTO(post);
 
         return new ResponseEntity<>(postDTO, HttpStatus.OK);
+    }
+
+    @PostMapping("/{postId}/delete")
+    public ResponseEntity<MessageResponse> deletePost(@PathVariable("postId") String postId, Principal principal) {
+        postService.deletePost(Long.parseLong(postId), principal);
+        return new ResponseEntity<>(new MessageResponse("The post " + postId + " were deleted"), HttpStatus.OK);
     }
 }
